@@ -1,11 +1,256 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Paka">
+  <div class="content">
+    <Header />
+    <main>
+      <article>
+        <h2>Escanea un producto</h2>
+        <div class="scanner-container">
+          <button id="scannerBtn" class="scanner-btn">Escanear código de barras</button>
+          <div id="scannerDropdown" class="scanner-dropdown">
+            <button class="dropdown-option" id="useCamera">
+              <span>Usar cámara</span>
+            </button>
+            <div class="divider">o</div>
+            <div class="input-group">
+              <input 
+                type="text" 
+                id="barcodeInput" 
+                placeholder="Ingresar código"
+                class="barcode-input"
+              />
+              <button id="submitBarcode" class="submit-btn">Ir</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    const scannerBtn = document.getElementById('scannerBtn');
+    const scannerDropdown = document.getElementById('scannerDropdown');
+    const useCameraBtn = document.getElementById('useCamera');
+    const barcodeInput = document.getElementById('barcodeInput') as HTMLInputElement | null;
+    const submitBtn = document.getElementById('submitBarcode');
+
+    scannerBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      scannerDropdown?.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (scannerBtn && scannerDropdown && 
+          !scannerBtn.contains(e.target as Node) && 
+          !scannerDropdown.contains(e.target as Node)) {
+        scannerDropdown.classList.remove('show');
+      }
+    });
+
+    function handleBarcodeSubmit() {
+      const barcode = barcodeInput?.value.trim();
+      if (barcode) {
+        console.log('Código ingresado:', barcode);
+        alert(`Código escaneado: ${barcode}`);
+        scannerDropdown?.classList.remove('show');
+        if (barcodeInput) barcodeInput.value = '';
+      }
+    }
+
+    submitBtn?.addEventListener('click', handleBarcodeSubmit);
+    barcodeInput?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleBarcodeSubmit();
+    });
+
+    useCameraBtn?.addEventListener('click', () => {
+      alert('Funcionalidad de cámara se implementará aquí');
+    });
+  </script>
 </Layout>
+
+<style>
+:root {
+  --primary-color: #35ba37;
+  --dark-color: #162013;
+  --light-color: #ffffff;
+  --dropdown-bg: #1e2a1a;
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+.content {
+  background-color: var(--dark-color);
+  min-height: 100vh;
+  color: var(--light-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--light-color);
+}
+
+.scanner-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.scanner-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: var(--primary-color);
+  color: var(--dark-color);
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scanner-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.scanner-btn:active {
+  transform: translateY(0);
+}
+
+.scanner-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 100%;
+  background-color: var(--dropdown-bg);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  border: 1px solid var(--border-color);
+}
+
+.scanner-dropdown.show {
+  display: block;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  color: var(--light-color);
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.dropdown-option::before {
+  content: '📷';
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.dropdown-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 12px 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 0 10px;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.barcode-input {
+  flex: 1;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--light-color);
+  font-size: 0.95rem;
+}
+
+.barcode-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(53, 186, 55, 0.2);
+}
+
+.submit-btn {
+  padding: 0 20px;
+  background-color: var(--primary-color);
+  color: var(--dark-color);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+article {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+button {
+	background-color: #35ba37;
+	color: #162013;
+	padding: 16px 16px;
+	border-radius: 20px;
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+}
+</style>
+
