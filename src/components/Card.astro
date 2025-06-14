@@ -1,0 +1,221 @@
+---
+interface Props {
+  product: {
+    product_name?: string;
+    brands?: string;
+    categories?: string;
+    image_url?: string;
+    nutriments?: {
+      'energy-kcal_100g'?: number;
+      fat_100g?: number;
+      'saturated-fat_100g'?: number;
+      carbohydrates_100g?: number;
+      sugars_100g?: number;
+      proteins_100g?: number;
+      salt_100g?: number;
+      [key: string]: any;
+    };
+  };
+}
+
+const { product } = Astro.props;
+---
+
+<div class="card">
+  {product.image_url && (
+    <div class="card-image">
+      <img 
+        src={product.image_url} 
+        alt={product.product_name || 'Imagen del producto'} 
+        width="300"
+        height="300"
+        loading="lazy"
+      />
+    </div>
+  )}
+  
+  <div class="card-content">
+    {product.product_name && <h2 class="card-title">{product.product_name}</h2>}
+    
+    {product.brands && <p class="card-brand">{product.brands}</p>}
+    
+    {product.categories && (
+      <div class="card-categories">
+        {(() => {
+          const categories = product.categories.split(',').map(c => c.trim());
+          return categories.map((category, index) => (
+            <Fragment>
+              <span class="category-tag">
+                {category}
+              </span>
+            </Fragment>
+          ));
+        })()}
+      </div>
+    )}
+    
+    {product.nutriments && (
+      <div class="nutrition-facts">
+        <h3>Información Nutricional (por 100g)</h3>
+        <div class="nutrition-grid">
+          {product.nutriments['energy-kcal_100g'] !== undefined && (
+            <div class="nutrition-item">
+              <span class="label">Energía</span>
+              <span class="value">{product.nutriments['energy-kcal_100g']} kcal</span>
+            </div>
+          )}
+          {product.nutriments.fat_100g !== undefined && (
+            <div class="nutrition-item">
+              <span class="label">Grasas</span>
+              <span class="value">{product.nutriments.fat_100g}g</span>
+            </div>
+          )}
+          {product.nutriments.carbohydrates_100g !== undefined && (
+            <div class="nutrition-item">
+              <span class="label">Hidratos</span>
+              <span class="value">{product.nutriments.carbohydrates_100g}g</span>
+            </div>
+          )}
+          {product.nutriments.proteins_100g !== undefined && (
+            <div class="nutrition-item">
+              <span class="label">Proteínas</span>
+              <span class="value">{product.nutriments.proteins_100g}g</span>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 1rem auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+  
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1rem;
+  }
+  
+  .card-content {
+    padding: 1.5rem;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .card-brand {
+    color: #666;
+    margin: 0 0 1.25rem 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .card-categories {    
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .category-tag {
+    background: #4CAF50;
+    color: white;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s ease;
+  }
+  
+  .category-tag:hover {
+    background: #3e8e41;
+    cursor: default;
+  }
+  
+  .nutrition-facts {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+  
+  .nutrition-facts h3 {
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+  
+  .nutrition-item {
+    background: white;
+    padding: 0.8rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .nutrition-item:hover {
+    transform: translateY(-2px);
+  }
+  
+  .nutrition-item .label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+  }
+  
+  .nutrition-item .value {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    .card {
+      max-width: 100%;
+      margin: 0.5rem;
+    }
+    
+    .card-image {
+      height: 200px;
+    }
+    
+    .nutrition-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
