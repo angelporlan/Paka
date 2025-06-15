@@ -81,6 +81,7 @@ import Header from '../components/Header.astro';
           }
 
           const product = {
+            id: data.product._id,
             product_name: data.product.product_name,
             brands: data.product.brands,
             categories: data.product.categories,
@@ -119,7 +120,7 @@ import Header from '../components/Header.astro';
         const productElement = document.createElement('div');
         productElement.classList.add('product');
         productElement.innerHTML = `
-        <div class="product-info" style="display: flex; border-bottom: 1px solid #fff; padding: 16px;">
+        <div class="product-info" style="display: flex; border-bottom: 1px solid #fff; padding: 16px; cursor: pointer; transition: all 0.2s; border-radius: 16px 16px 0 0;" onclick="localStorage.setItem('click', ${product.id}); window.location.href = '/info';" onmouseover="this.style.backgroundColor = '#152a16'" onmouseout="this.style.backgroundColor = 'transparent'">
           <img src="${product.image_url}" alt="${product.product_name}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; margin-right: 16px;">
           <div style="width: 100%;">
             <h3 style="margin: 0; padding: 0;">${product.product_name}</h3>

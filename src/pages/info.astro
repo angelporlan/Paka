@@ -1,0 +1,426 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+
+// Obtener el ID del producto del localStorage
+const productId = typeof window !== 'undefined' ? localStorage.getItem('click') : '8480000106667'; // Usando el ID de ejemplo
+
+// Datos del producto (simulando la respuesta de la API)
+const productData = {
+  product_name: 'Arroz largo',
+  brands: 'Hacendado',
+  image_url: 'https://images.openfoodfacts.org/images/products/848/000/010/6667/front_es.10.400.jpg',
+  ingredients_text: 'Arroz largo',
+  nutriscore_grade: 'a',
+  ecoscore_grade: 'b',
+  nutriments: {
+    'energy-kcal_100g': 350,
+    fat_100g: 1.2,
+    'saturated-fat_100g': 0.3,
+    carbohydrates_100g: 77.7,
+    sugars_100g: 0.3,
+    fiber_100g: 1.4,
+    proteins_100g: 7.1,
+    salt_100g: 0.01
+  },
+  categories: 'Cereales y derivados, Arroces',
+  quantity: '1 kg',
+  code: 'No disponible',
+  origins: 'No disponible',
+  allergens: 'No disponible'
+};
+---
+
+<Layout title={`${productData.product_name} | Paka`}>
+  <div class="content">
+    <Header />
+    <main class="product-detail" style="display: none;">
+      <div class="product-header">
+        <div class="product-image">
+          <img 
+            id="product-img"
+            src={productData.image_url} 
+            alt={productData.product_name}
+            onerror="this.src='https://via.placeholder.com/300?text=Imagen+no+disponible'"
+            class="product-img"
+          />
+        </div>
+        <div class="product-info">
+          <h1 id="product-name">{productData.product_name}</h1>
+          <p class="brand" id="product-brand">{productData.brands}</p>
+          
+          <div class="scores">
+            <div class="score">
+              <span>Nutri-Score</span>
+              <div id="nutriscore" class={`score-badge score-${productData.nutriscore_grade || 'unknown'}`}>
+                {productData.nutriscore_grade ? productData.nutriscore_grade.toUpperCase() : '?'}
+              </div>
+            </div>
+            <div class="score">
+              <span>Eco-Score</span>
+              <div id="ecoscore" class={`score-badge eco-score-${productData.ecoscore_grade || 'unknown'}`}>
+                {productData.ecoscore_grade ? productData.ecoscore_grade.toUpperCase() : '?'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-sections">
+        <div class="section">
+          <h2>Ingredientes</h2>
+          <p id="ingredients-text">{productData.ingredients_text || 'No disponible'}</p>
+          
+          {productData.allergens && (
+            <div class="allergens">
+              <h3>Alérgenos</h3>
+              <p id="allergens">{productData.allergens}</p>
+            </div>
+          )}
+        </div>
+
+        <div class="section">
+          <h2>Información nutricional</h2>
+          <div class="nutrition-facts">
+            <div class="nutrition-row">
+              <span>Valor energético</span>
+              <span id="energy-kcal_100g">{productData.nutriments['energy-kcal_100g'] || 'N/A'} kcal</span>
+            </div>
+            <div class="nutrition-row">
+              <span>Grasas</span>
+              <span id="fat_100g">{productData.nutriments.fat_100g || 'N/A'}g</span>
+            </div>
+            <div class="nutrition-row sub">
+              <span>- de las cuales saturadas</span>
+              <span id="saturated-fat_100g">{productData.nutriments['saturated-fat_100g'] || 'N/A'}g</span>
+            </div>
+            <div class="nutrition-row">
+              <span>Hidratos de carbono</span>
+              <span id="carbohydrates_100g">{productData.nutriments.carbohydrates_100g || 'N/A'}g</span>
+            </div>
+            <div class="nutrition-row sub">
+              <span>- de los cuales azúcares</span>
+              <span id="sugars_100g">{productData.nutriments.sugars_100g || 'N/A'}g</span>
+            </div>
+            <div class="nutrition-row">
+              <span>Fibra alimentaria</span>
+              <span id="fiber_100g">{productData.nutriments.fiber_100g || 'N/A'}g</span>
+            </div>
+            <div class="nutrition-row">
+              <span>Proteínas</span>
+              <span id="proteins_100g">{productData.nutriments.proteins_100g || 'N/A'}g</span>
+            </div>
+            <div class="nutrition-row">
+              <span>Sal</span>
+              <span id="salt_100g">{(productData.nutriments.salt_100g * 1000).toFixed(2) || 'N/A'}g</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section additional-info">
+          <h2>Información adicional</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Categoría</span>
+              <span id="categories" class="info-value">{productData.categories || 'No especificada'}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Cantidad</span>
+              <span id="quantity" class="info-value">{productData.quantity || 'No especificada'}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Código de barras</span>
+              <span id="code" class="info-value">{productData.code || 'No disponible'}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Origen</span>
+              <span id="origins" class="info-value">{productData.origins || 'No especificado'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</Layout>
+
+<script>
+    const click = localStorage.getItem('click');
+    if (click) {
+        try {
+            const response = await fetch(`https://es.openfoodfacts.org/api/v0/product/${click}.json`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Product data:', data);
+                if (data.product) {
+                    if (document.querySelector('.product-detail') as HTMLElement) (document.querySelector('.product-detail') as HTMLElement).style.display = 'block';    
+                    if (document.getElementById('product-img') as HTMLImageElement && data.product.image_url) (document.getElementById('product-img') as HTMLImageElement).src = data.product.image_url;
+                    if (document.getElementById('product-name') as HTMLHeadingElement && data.product.product_name) (document.getElementById('product-name') as HTMLHeadingElement).textContent = data.product.product_name;
+                    if (document.getElementById('product-brand') as HTMLParagraphElement && data.product.brands) (document.getElementById('product-brand') as HTMLParagraphElement).textContent = data.product.brands;
+                    if (document.getElementById('nutriscore') as HTMLDivElement && data.product.nutriscore_grade) {
+                        const nutriscore = data.product.nutriscore_grade === 'unknown' ? '?' : data.product.nutriscore_grade.toUpperCase();
+                        (document.getElementById('nutriscore') as HTMLDivElement).textContent = nutriscore;
+                    }
+                    if (document.getElementById('ecoscore') as HTMLDivElement && data.product.ecoscore_grade) {
+                        const ecoscore = data.product.ecoscore_grade === 'unknown' ? '?' : data.product.ecoscore_grade.toUpperCase();
+                        (document.getElementById('ecoscore') as HTMLDivElement).textContent = ecoscore;
+                    }
+                    if (document.getElementById('ingredients-text') as HTMLParagraphElement && data.product.ingredients_text) (document.getElementById('ingredients-text') as HTMLParagraphElement).textContent = data.product.ingredients_text;
+                    if (document.getElementById('allergens') as HTMLParagraphElement && data.product.allergens) (document.getElementById('allergens') as HTMLParagraphElement).textContent = data.product.allergens;
+                    if (document.getElementById('energy-kcal_100g') as HTMLParagraphElement && data.product.nutriments['energy-kcal_100g']) (document.getElementById('energy-kcal_100g') as HTMLParagraphElement).textContent = data.product.nutriments['energy-kcal_100g'].toString() + ' kcal';
+                    if (document.getElementById('fat_100g') as HTMLParagraphElement && data.product.nutriments.fat_100g) (document.getElementById('fat_100g') as HTMLParagraphElement).textContent = data.product.nutriments.fat_100g.toString() + ' g';
+                    if (document.getElementById('saturated-fat_100g') as HTMLParagraphElement && data.product.nutriments['saturated-fat_100g']) (document.getElementById('saturated-fat_100g') as HTMLParagraphElement).textContent = data.product.nutriments['saturated-fat_100g'].toString() + ' g';
+                    if (document.getElementById('carbohydrates_100g') as HTMLParagraphElement && data.product.nutriments.carbohydrates_100g) (document.getElementById('carbohydrates_100g') as HTMLParagraphElement).textContent = data.product.nutriments.carbohydrates_100g.toString() + ' g';
+                    if (document.getElementById('sugars_100g') as HTMLParagraphElement && data.product.nutriments.sugars_100g) (document.getElementById('sugars_100g') as HTMLParagraphElement).textContent = data.product.nutriments.sugars_100g.toString() + ' g';
+                    if (document.getElementById('fiber_100g') as HTMLParagraphElement && data.product.nutriments.fiber_100g) (document.getElementById('fiber_100g') as HTMLParagraphElement).textContent = data.product.nutriments.fiber_100g.toString() + ' g';
+                    if (document.getElementById('proteins_100g') as HTMLParagraphElement && data.product.nutriments.proteins_100g) (document.getElementById('proteins_100g') as HTMLParagraphElement).textContent = data.product.nutriments.proteins_100g.toString() + ' g';
+                    if (document.getElementById('salt_100g') as HTMLParagraphElement && data.product.nutriments.salt_100g) (document.getElementById('salt_100g') as HTMLParagraphElement).textContent = (data.product.nutriments.salt_100g * 1000).toFixed(2).toString() + ' g';
+                    
+                    if (document.getElementById('categories') as HTMLParagraphElement && data.product.categories) {
+                        const categories = data.product.categories.split(',');
+                        (document.getElementById('categories') as HTMLParagraphElement).textContent = categories[0];
+                    }
+                    if (document.getElementById('quantity') as HTMLParagraphElement && data.product.quantity) (document.getElementById('quantity') as HTMLParagraphElement).textContent = data.product.quantity;
+                    if (document.getElementById('code') as HTMLParagraphElement && data.product.code) (document.getElementById('code') as HTMLParagraphElement).textContent = data.product.code;
+                    if (document.getElementById('origins') as HTMLParagraphElement && data.product.manufacturing_places) (document.getElementById('origins') as HTMLParagraphElement).textContent = data.product.manufacturing_places;
+                }
+            } else {
+                console.error('Failed to fetch product data');
+            }
+        } catch (error) {
+            console.error('Error fetching product data:', error);
+        }
+    } else {
+        console.error('No product ID found in localStorage');
+    }
+</script>
+
+<style>
+  :root {
+    --bg-color: #162013;
+    --card-bg: #162013;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --accent-color: #4CAF50;
+    --border-color: #404040;
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    line-height: 1.6;
+  }
+  
+  .content {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  main {
+    background-color: var(--bg-color);
+    flex: 1;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .product-detail {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin: 1rem 0;
+  }
+  
+  .product-header {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .product-image {
+    background: #1a1a1a;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  
+  .product-img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+  }
+  
+  .product-info {
+    text-align: center;
+  }
+  
+  .product-info h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+    color: var(--text-primary);
+  }
+  
+  .brand {
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+  }
+  
+  .scores {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+  
+  .score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .score span {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+  }
+  
+  .score-badge {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .score-a { background-color: #008b4c; }
+  .score-b { background-color: #80c142; }
+  .score-c { background-color: #ffed00; color: #333; }
+  .score-d { background-color: #f58220; }
+  .score-e { background-color: #ee3e32; }
+  .score-unknown { background-color: #666; }
+  
+  .eco-score-a { background-color: #1e8a3c; }
+  .eco-score-b { background-color: #5daa3a; }
+  .eco-score-c { background-color: #f9d231; color: #333; }
+  .eco-score-d { background-color: #ed7d2c; }
+  .eco-score-e { background-color: #e63e11; }
+  .eco-score-unknown { background-color: #666; }
+  
+  .product-sections {
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .section:last-child {
+    border-bottom: none;
+  }
+  
+  h2 {
+    color: var(--accent-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.4rem;
+  }
+  
+  .allergens h3 {
+    color: #ff6b6b;
+    margin: 1.5rem 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .nutrition-facts {
+    margin-top: 1rem;
+  }
+  
+  .nutrition-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .nutrition-row:last-child {
+    border-bottom: none;
+  }
+  
+  .nutrition-row.sub {
+    padding-left: 1rem;
+    color: var(--text-secondary);
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .info-item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .info-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+  }
+  
+  .info-value {
+    font-weight: 500;
+  }
+  
+  @media (min-width: 768px) {
+    .product-header {
+      flex-direction: row;
+      align-items: center;
+      text-align: left;
+    }
+    
+    .product-info {
+      padding-left: 2rem;
+      text-align: left;
+    }
+    
+    .scores {
+      justify-content: flex-start;
+    }
+    
+    .product-image {
+      flex: 0 0 300px;
+      height: 300px;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .scores {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .product-image {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+  }
+</style>
+
