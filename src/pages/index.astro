@@ -29,10 +29,14 @@ import Header from '../components/Header.astro';
         </div>
       </article>
 
+      <section id="productsContainer"></section>
+
     </main>
   </div>
 
   <script>
+    renderProducts(JSON.parse(localStorage.getItem('products') || '[]'));
+
     const scannerBtn = document.getElementById('scannerBtn');
     const scannerDropdown = document.getElementById('scannerDropdown');
     const useCameraBtn = document.getElementById('useCamera');
@@ -58,7 +62,6 @@ import Header from '../components/Header.astro';
       try {
         console.log('Buscando producto con código:', barcode);
         
-        // Hacer la petición a la API de Open Food Facts
         const response = await fetch(`https://es.openfoodfacts.org/api/v0/product/${barcode}.json`);
         
         if (!response.ok) {
@@ -67,16 +70,35 @@ import Header from '../components/Header.astro';
         
         const data = await response.json();
         
-        let productObject = null;
         if (data.status === 0) {
           console.log('Producto no encontrado');
           alert('Producto no encontrado en la base de datos');
         } else {
           console.log('Información del producto:', data.product);
-          console.log('Nombre:', data.product.product_name);
-          console.log('Marca:', data.product.brands);
-          console.log('Categorías:', data.product.categories);
 
+          if (!localStorage.getItem('products')) {
+            localStorage.setItem('products', JSON.stringify([]));
+          }
+
+          const product = {
+            product_name: data.product.product_name,
+            brands: data.product.brands,
+            categories: data.product.categories,
+            image_url: data.product.image_url,
+            nutriments: data.product.nutriments,
+            date: new Date().toISOString(),
+            grade: calculateHealthScore(data.product),
+          }
+
+          const products = JSON.parse(localStorage.getItem('products') || '[]');
+          const existingProductIndex = products.findIndex((p: any) => p.product_name === product.product_name && p.brands === product.brands);
+          if (existingProductIndex !== -1) {
+            products.splice(existingProductIndex, 1);
+          }
+          products.push(product);
+          localStorage.setItem('products', JSON.stringify(products));
+
+          renderProducts(JSON.parse(localStorage.getItem('products') || '[]'));
         }
         
         scannerDropdown?.classList.remove('show');
@@ -88,6 +110,43 @@ import Header from '../components/Header.astro';
       }
     }
 
+    function renderProducts(products: any) {
+      const productsContainer = document.getElementById('productsContainer');
+      
+      if (!productsContainer) return;
+      productsContainer.innerHTML = '';
+      products.slice().reverse().forEach((product: any) => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('product');
+        productElement.innerHTML = `
+        <div class="product-info" style="display: flex; border-bottom: 1px solid #fff; padding: 16px;">
+          <img src="${product.image_url}" alt="${product.product_name}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; margin-right: 16px;">
+          <div style="width: 100%;">
+            <h3 style="margin: 0; padding: 0;">${product.product_name}</h3>
+            <p style="margin: 0; padding: 0;">${product.brands}</p>
+            <span style="display: inline-block; width: 16px; height: 16px; border-radius: 50%; background-color: ${
+              product.grade >= 90 ? '#006400' :
+              product.grade >= 75 ? '#32CD32' :
+              product.grade >= 50 ? '#FFD700' :
+              product.grade >= 25 ? '#FF6347' :
+              '#FF0000'
+            }; vertical-align: middle; margin-right: 4px;"></span>
+            <p style="margin: 0; display: inline-block; vertical-align: middle;">
+              ${product.grade >= 90 ? 'Excelente' :
+              product.grade >= 75 ? 'Bueno' :
+              product.grade >= 50 ? 'Mediocre' :
+              product.grade >= 25 ? 'Malo' :
+              'Muy malo'
+            }
+            </p>
+            <p style="margin: 4px 0 0 0px; padding: 0;">${getDateString(product.date)}</p>
+          </div>
+        </div>
+        `;
+        productsContainer.appendChild(productElement);
+      });
+    }
+
     submitBtn?.addEventListener('click', handleBarcodeSubmit);
     barcodeInput?.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') handleBarcodeSubmit();
@@ -96,10 +155,100 @@ import Header from '../components/Header.astro';
     useCameraBtn?.addEventListener('click', () => {
       alert('Funcionalidad de cámara se implementará aquí');
     });
+
+    function getDateString(dateString: string) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = now.getTime() - date.getTime();
+      const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const diffHours = Math.floor(diff / (1000 * 60 * 60));
+      const diffMinutes = Math.floor(diff / (1000 * 60));
+      const diffSeconds = Math.floor(diff / 1000);
+      if (diffDays > 365) return `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${Math.floor(diffDays / 365)} años`;
+      if (diffDays > 30) return `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${Math.floor(diffDays / 30)} meses`;
+      if (diffDays > 7) return `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${Math.floor(diffDays / 7)} semanas`;
+      if (diffDays > 0) return `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${diffDays} días`;
+      if (diffHours > 0) return `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${diffHours} horas`;
+      if (diffMinutes > 0) return `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${diffMinutes} minutos`;
+      return diffSeconds === 0 ? `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Justo ahora` : `<img src="/svg/clock.svg" alt="Clock" style="width: 17px; height: 17px; margin-right: 4px; margin-bottom: -2px;"> Hace ${diffSeconds} segundos`;
+    }
+
+    function calculateHealthScore(product: any) {
+  let score = 0;
+
+  // ----------- 1. Composición (60 pts) ------------
+  const ingredients = product.ingredients_text?.toLowerCase() || "";
+
+  // Ingredientes simples
+  if (ingredients.split(',').length === 1 || ingredients.match(/^\s*(arroz|trigo|sémola|agua|huevo|sal)\s*$/)) {
+    score += 30;
+  } else if (ingredients.split(',').length <= 3) {
+    score += 15;
+  }
+
+  // Aditivos
+  if (product.additives_n === 0) {
+    score += 15;
+  } else if (product.additives_n === 1) {
+    score += 10;
+  } else if (product.additives_n === 2) {
+    score += 5;
+  }
+
+  // Aceite de palma
+  if (product.ingredients_analysis_tags?.includes("en:palm-oil-free")) {
+    score += 5;
+  }
+
+  // Alérgenos
+  if (!product.allergens || product.allergens === "") {
+    score += 5;
+  }
+
+  // ----------- 2. Procesamiento (25 pts) ------------
+  if (product.categories_tags?.some((tag: any) => tag.includes("rice") || tag.includes("pasta") || tag.includes("grains"))) {
+    score += 20;
+  } else if (product.ingredients_text?.split(',').length <= 3) {
+    score += 10;
+  }
+
+  // ----------- 3. Indicadores externos (15 pts) ------------
+  // NutriScore
+  const nutri = product.nutriscore_grade?.toLowerCase();
+  if (nutri === "a") score += 8;
+  else if (nutri === "b") score += 6;
+  else if (nutri === "c") score += 4;
+  else if (nutri === "d") score += 2;
+
+  // EcoScore
+  const eco = product.ecoscore_grade?.toLowerCase();
+  if (eco === "a") score += 5;
+  else if (eco === "b") score += 4;
+  else if (eco === "c") score += 3;
+  else if (eco === "d") score += 2;
+  else if (eco === "e") score += 0;
+
+  // Penalización si faltan datos clave
+  const missingFields = ["nutriscore_grade", "ingredients_text", "ecoscore_grade"];
+  const missing = missingFields.filter(f => !product[f]);
+  if (missing.length > 0) score -= 5;
+
+  // Limitar entre 0 y 100
+  return Math.max(0, Math.min(100, score));
+}
+
+
   </script>
 </Layout>
 
 <style>
+#productsContainer {
+  width: 100%;
+  margin-top: 20px;
+  gap: 20px;
+  display: grid;
+}
+
 :root {
   --primary-color: #35ba37;
   --dark-color: #162013;
