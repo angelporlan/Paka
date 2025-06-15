@@ -1,6 +1,12 @@
 <header>
-	<h1>Paka</h1>
+	<h1 id="headerTitle">Paka</h1>
 </header>
+
+<script>
+	document.getElementById('headerTitle')?.addEventListener('click', () => {
+		window.location.href = '/';
+	});
+</script>
 
 <style>
 	header {
@@ -12,5 +18,6 @@
 	header h1 {
 		margin: 0;
 		padding: 0;
+		cursor: pointer;
 	}
 </style>
