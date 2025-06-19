@@ -1,7 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+
+// Declaración de tipo para Quagga
+declare const Quagga: any;
 ---
+
+<!-- Add QuaggaJS library -->
+<script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
 
 <Layout title="Paka">
   <div class="content">
@@ -35,6 +41,11 @@ import Header from '../components/Header.astro';
   </div>
 
   <script>
+    async function initQuagga() {
+      const Quagga = await import('quagga').then(module => module.default || module);
+      return Quagga;
+    }
+
     renderProducts(JSON.parse(localStorage.getItem('products') || '[]'));
 
     const scannerBtn = document.getElementById('scannerBtn');
@@ -131,7 +142,15 @@ import Header from '../components/Header.astro';
               product.grade >= 50 ? '#FFD700' :
               product.grade >= 25 ? '#FF6347' :
               '#FF0000'
-            }; vertical-align: middle; margin-right: 4px;"></span>
+            }, (err) => {
+            if (err) {
+              console.error('Error initializing Quagga:', err);
+              reject(err);
+            } else {
+              console.log('Quagga initialized successfully');
+              resolve(true);
+            }
+          }); vertical-align: middle; margin-right: 4px;"></span>
             <p style="margin: 0; display: inline-block; vertical-align: middle;">
               ${product.grade >= 90 ? 'Excelente' :
               product.grade >= 75 ? 'Bueno' :
@@ -153,8 +172,170 @@ import Header from '../components/Header.astro';
       if (e.key === 'Enter') handleBarcodeSubmit();
     });
 
-    useCameraBtn?.addEventListener('click', () => {
-      alert('Funcionalidad de cámara se implementará aquí');
+    useCameraBtn?.addEventListener('click', async () => {
+      const modal = document.createElement('div');
+      modal.style.position = 'fixed';
+      modal.style.top = '0';
+      modal.style.left = '0';
+      modal.style.width = '100%';
+      modal.style.height = '100%';
+      modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+      modal.style.zIndex = '1000';
+      modal.style.display = 'flex';
+      modal.style.flexDirection = 'column';
+      modal.style.alignItems = 'center';
+      modal.style.justifyContent = 'center';
+      modal.style.color = 'white';
+      
+      modal.innerHTML = `
+        <h2 style="margin-bottom: 20px; text-align: center;">Escaneando código de barras</h2>
+        <div id="interactive" style="width: 90%; max-width: 500px; height: 350px; position: relative; margin: 0 auto; background-color: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+          <video id="video" style="width: 100%; height: 100%; object-fit: contain; background-color: #000; display: block;"></video>
+          <canvas id="canvas" style="display: none;"></canvas>
+          <div id="scanner-guide" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 2px; background: rgba(255, 0, 0, 0.5);"></div>
+        </div>
+        <p id="scannerStatus" style="margin: 15px 0; text-align: center; font-size: 1.1em;">Acerca el código de barras a la cámara</p>
+        <div style="text-align: center;">
+          <button id="closeScanner" style="padding: 12px 24px; background: #ff4d4d; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            Cerrar escáner
+          </button>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      const Quagga = await initQuagga();
+      
+      const closeScanner = () => {
+        if (Quagga) {
+          Quagga.stop();
+          Quagga.offDetected();
+        }
+        if (modal && modal.parentNode) {
+          document.body.removeChild(modal);
+        }
+      };
+
+      document.getElementById('closeScanner')?.addEventListener('click', closeScanner);
+      
+      modal.addEventListener('click', function(e: any) {
+        if (e.target === modal) {
+          closeScanner();
+        }
+      });
+
+      const onBarcodeDetected = function(result: any) {
+        const code = result.codeResult.code;
+        console.log('Código detectado:', code);
+        
+        closeScanner();
+        
+        if (barcodeInput) {
+          barcodeInput.value = code;
+          handleBarcodeSubmit();
+        }
+      };
+
+      try {
+        console.log('Inicializando Quagga...');
+        const videoElement = document.querySelector('#video');
+        if (!videoElement) {
+          throw new Error('No se encontró el elemento de video');
+        }
+        
+        console.log('Configurando Quagga...');
+        await new Promise((resolve, reject) => {
+          Quagga.init({
+            inputStream: {
+              name: "Live",
+              type: "LiveStream",
+              target: videoElement,
+              constraints: {
+                facingMode: "environment",
+                width: { min: 640, ideal: 1280, max: 1920 },
+                height: { min: 480, ideal: 720, max: 1080 },
+                aspectRatio: { ideal: 1.777778 }
+              },
+              area: {
+                top: "0%",
+                right: "0%",
+                left: "0%",
+                bottom: "0%"
+              },
+            },
+            frequency: 10,
+            debug: {
+              drawBoundingBox: true,
+              showCanvas: false,
+              showPattern: false,
+              showFrequency: false,
+              showSkeleton: false,
+              showLabels: false,
+              showPatch: false,
+              showRecalculated: false,
+              showScanning: false,
+              showPatches: false,
+              showFoundPatches: false,
+              showPatchLabels: false,
+              showRemainingPatchLabels: false
+            },
+            decoder: {
+              readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "upc_reader", "upc_e_reader"],
+              multiple: false
+            },
+            numOfWorkers: navigator.hardwareConcurrency || 4,
+            locate: true,
+            halfSample: true
+          }, (err) => {
+            if (err) {
+              console.error('Error initializing Quagga:', err);
+              reject(err);
+            } else {
+              console.log('Quagga initialized successfully');
+              resolve(true);
+            }
+          });
+        });
+        
+        console.log('Quagga initialized, starting camera...');
+        await Quagga.start();
+        console.log('Cámara iniciada correctamente');
+        
+        Quagga.onDetected(onBarcodeDetected);
+        
+        const checkVideo = setInterval(() => {
+          const video = document.querySelector('video');
+          if (video && video.readyState >= 2) {
+            clearInterval(checkVideo);
+            console.log('El video está reproduciéndose');
+            const statusElement = document.getElementById('scannerStatus');
+            if (statusElement) {
+              statusElement.textContent = 'Acerca el código de barras a la cámara';
+            }
+          }
+        }, 500);
+        
+      } catch (err) {
+        console.error('Error en Quagga:', err);
+        const statusElement = document.getElementById('scannerStatus');
+        if (statusElement) {
+          statusElement.textContent = 'Error al iniciar la cámara: ' + (err instanceof Error ? err.message : String(err));
+          statusElement.style.color = 'red';
+        }
+        
+        const retryButton = document.createElement('button');
+        retryButton.textContent = 'Reintentar';
+        retryButton.style.marginTop = '10px';
+        retryButton.style.padding = '8px 16px';
+        retryButton.style.background = '#4CAF50';
+        retryButton.style.color = 'white';
+        retryButton.style.border = 'none';
+        retryButton.style.borderRadius = '4px';
+        retryButton.style.cursor = 'pointer';
+        retryButton.onclick = () => window.location.reload();
+        
+        statusElement?.parentNode?.appendChild(retryButton);
+      }
     });
 
     function getDateString(dateString: string) {
