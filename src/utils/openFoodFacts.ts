@@ -34,7 +34,10 @@ export const fetchProductData = async (barcode: string): Promise<Product | null>
         nutriments: product.nutriments,
         nutrition_grades: product.nutrition_grades || '',
         categories: product.categories || '',
-        ingredients_text: product.ingredients_text || ''
+        ingredients_text: product.ingredients_text || '',
+        additives_tags: product.additives_tags || [],
+        additives_n: product.additives_n || 0,
+        additives_original_tags: product.additives_original_tags || []
       };
     }
     

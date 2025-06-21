@@ -17,6 +17,15 @@ import {
   XCircle
 } from 'lucide-react';
 
+interface NutritionItem {
+  label: string;
+  value: number | undefined;
+  unit: string;
+  displayValue?: string;
+  icon: React.FC<{ className?: string }>;
+  color: string;
+}
+
 interface ProductDisplayProps {
   product: Product;
   userGoal: UserGoal;
@@ -40,48 +49,67 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({ product, userGoa
     return 'from-poor-500 to-poor-600';
   };
 
-  const nutritionItems = [
+  const energyKcal = nutriments.energy_100g ? nutriments.energy_100g / 4.184 : undefined;
+
+  const nutritionItems: NutritionItem[] = [
     { 
-      label: 'Calorías', 
-      value: nutriments.energy_100g, 
-      unit: 'kcal', 
-      icon: Zap,
+      label: 'Energía', 
+      value: nutriments.energy_100g,
+      unit: '',
+      displayValue: nutriments.energy_100g ? 
+        `${Math.round(nutriments.energy_100g)} kJ / ${Math.round(energyKcal!)} kcal` : 'N/D',
+      icon: ({ className }) => <Zap className={className} />,
       color: 'text-orange-600' 
     },
     { 
       label: 'Proteínas', 
       value: nutriments.proteins_100g, 
       unit: 'g', 
-      icon: Beef,
+      icon: ({ className }) => <Beef className={className} />,
       color: 'text-red-600' 
     },
     { 
       label: 'Carbohidratos', 
       value: nutriments.carbohydrates_100g, 
       unit: 'g', 
-      icon: Wheat,
+      icon: ({ className }) => <Wheat className={className} />,
       color: 'text-yellow-600' 
     },
     { 
       label: 'Grasas', 
       value: nutriments.fat_100g, 
       unit: 'g', 
-      icon: Droplets,
+      icon: ({ className }) => <Droplets className={className} />,
       color: 'text-blue-600' 
     },
     { 
       label: 'Azúcares', 
       value: nutriments.sugars_100g, 
       unit: 'g', 
-      icon: Droplets,
+      icon: ({ className }) => <Droplets className={className} />,
       color: 'text-pink-600' 
+    },
+    { 
+      label: 'Grasas saturadas', 
+      value: nutriments['saturated-fat_100g'], 
+      unit: 'g', 
+      icon: ({ className }) => <Droplets className={className} strokeWidth={3} />,
+      color: 'text-purple-600' 
     },
     { 
       label: 'Sal', 
       value: nutriments.salt_100g, 
       unit: 'g', 
-      icon: ShieldCheck,
+      icon: ({ className }) => <ShieldCheck className={className} />,
       color: 'text-gray-600' 
+    },
+    { 
+      label: 'Aditivos', 
+      value: product.additives_n,
+      unit: '',
+      displayValue: product.additives_n ? `${product.additives_n} ${product.additives_n === 1 ? 'aditivo' : 'aditivos'}` : 'Sin aditivos',
+      icon: ({ className }) => <Package className={className} />,
+      color: 'text-indigo-600'
     }
   ];
 
@@ -157,9 +185,9 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({ product, userGoa
             
             return (
               <div key={item.label} className="bg-white/50 rounded-xl p-4 text-center">
-                <Icon size={20} className={`mx-auto mb-2 ${item.color}`} />
+                <Icon className={`mx-auto mb-2 w-5 h-5 ${item.color}`} />
                 <div className="text-lg font-bold text-gray-900">
-                  {value !== undefined ? `${value.toFixed(1)}${item.unit}` : 'N/D'}
+                  {item.displayValue || (value !== undefined ? `${value.toFixed(1)}${item.unit}` : 'N/D')}
                 </div>
                 <div className="text-xs text-gray-600">{item.label}</div>
               </div>

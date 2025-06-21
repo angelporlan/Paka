@@ -22,6 +22,9 @@ export interface Product {
   nutrition_grades?: string;
   categories?: string;
   ingredients_text?: string;
+  additives_tags?: string[];
+  additives_n?: number;
+  additives_original_tags?: string[];
 }
 
 export interface NutritionAnalysis {
