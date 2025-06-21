@@ -1,6 +1,5 @@
 
-import React, { useState } from 'react';
-import { Header } from '../components/Header';
+import { useState } from 'react';
 import { UserGoalSelector } from '../components/UserGoalSelector';
 import { Scanner } from '../components/Scanner';
 import { ManualInput } from '../components/ManualInput';
@@ -18,7 +17,6 @@ const Index = () => {
   const handleProductFound = (product: Product) => {
     setCurrentProduct(product);
     
-    // Guardar en historial
     const history = JSON.parse(localStorage.getItem('nutriscan-history') || '[]');
     const newHistory = [product, ...history.filter((p: Product) => p.code !== product.code)].slice(0, 20);
     localStorage.setItem('nutriscan-history', JSON.stringify(newHistory));
@@ -30,7 +28,6 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Panel - Controls */}
           <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-            <Header />
             
             <div className="lg:sticky lg:top-6">
               <UserGoalSelector 
