@@ -3,7 +3,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { CameraOff } from 'lucide-react';
 
-export const PermissionError: React.FC = () => {
+interface PermissionErrorProps {
+  onRetry: () => void;
+}
+
+export const PermissionError: React.FC<PermissionErrorProps> = ({ onRetry }) => {
   return (
     <div className="bg-gradient-card rounded-2xl p-8 text-center border border-white/20">
       <CameraOff size={48} className="mx-auto mb-4 text-gray-400" />
@@ -12,7 +16,7 @@ export const PermissionError: React.FC = () => {
         Para escanear códigos necesitamos acceso a tu cámara. 
         Por favor, permite el acceso y recarga la página.
       </p>
-      <Button onClick={() => window.location.reload()} variant="outline">
+      <Button onClick={onRetry} variant="outline">
         Intentar de nuevo
       </Button>
     </div>
