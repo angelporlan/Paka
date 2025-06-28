@@ -25,9 +25,6 @@ const AppHeader = () => {
             Escanear Producto
           </Link>
           <Link to="#" className="text-gray-600 hover:text-emerald-600 transition-colors">
-            Beneficios
-          </Link>
-          <Link to="#" className="text-gray-600 hover:text-emerald-600 transition-colors">
             Contacto
           </Link>
         </nav>
