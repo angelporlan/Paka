@@ -24,7 +24,7 @@ const AppHeader = () => {
           <Link to="/app" className="text-gray-600 hover:text-emerald-600 transition-colors">
             Escanear Producto
           </Link>
-          <Link to="#" className="text-gray-600 hover:text-emerald-600 transition-colors">
+          <Link to="/contacto" className="text-gray-600 hover:text-emerald-600 transition-colors">
             Contacto
           </Link>
         </nav>
