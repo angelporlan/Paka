@@ -720,27 +720,27 @@ const Landing = () => {
               <h4 className="font-semibold mb-4 text-lg">Producto</h4>
               <ul className="space-y-3 text-gray-400">
                 <li><Link to="/app" className="hover:text-white transition-colors">Aplicación</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Características</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Base de datos</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Actualizaciones</a></li>
+                <li><Link to="/caracteristicas" className="hover:text-white transition-colors">Características</Link></li>
+                <li><Link to="/base-de-datos" className="hover:text-white transition-colors">Base de datos</Link></li>
+                <li><Link to="/actualizaciones" className="hover:text-white transition-colors">Actualizaciones</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-lg">Soporte</h4>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Centro de ayuda</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Comunidad</a></li>
+                <li><Link to="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link></li>
+                <li><Link to="/contacto" className="hover:text-white transition-colors">Contacto</Link></li>
+                <li><Link to="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
+                <li><Link to="/comunidad" className="hover:text-white transition-colors">Comunidad</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-lg">Legal</h4>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Política de privacidad</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Términos de uso</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cookies</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Licencias</a></li>
+                <li><Link to="/privacidad" className="hover:text-white transition-colors">Política de privacidad</Link></li>
+                <li><Link to="/terminos" className="hover:text-white transition-colors">Términos de uso</Link></li>
+                <li><Link to="/cookies" className="hover:text-white transition-colors">Cookies</Link></li>
+                <li><Link to="/licencias" className="hover:text-white transition-colors">Licencias</Link></li>
               </ul>
             </div>
           </div>
