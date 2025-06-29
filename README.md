@@ -1,73 +1,135 @@
-# Welcome to your Lovable project
+# NutriScan - Escáner Nutricional Inteligente
 
-## Project info
+<div align="center">
+  <img src="public/favicon.ico" alt="NutriScan Logo" width="100" height="100">
+  <h3>Tu compañero para una alimentación más saludable</h3>
+</div>
 
-**URL**: https://lovable.dev/projects/309016f7-1ecd-44f4-9465-0e95d5ed8eff
+## 📱 ¿Qué es NutriScan?
 
-## How can I edit this code?
+NutriScan es una aplicación web moderna que te permite escanear códigos de barras de productos alimenticios para obtener información nutricional detallada de forma instantánea. Diseñada para ayudarte a tomar decisiones alimentarias más informadas y saludables.
 
-There are several ways of editing your application.
+## ✨ Características Principales
 
-**Use Lovable**
+### 🔍 Escaneo Inteligente
+- **Escaneo de códigos de barras**: Detecta automáticamente códigos EAN-13 con alta precisión
+- **Búsqueda manual**: Introduce códigos de barras manualmente si el escaneo no funciona
+- **OCR integrado**: Lee números impresos debajo del código de barras usando reconocimiento óptico
+- **Modos de escaneo**: Alterna entre precisión y velocidad según tus necesidades
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/309016f7-1ecd-44f4-9465-0e95d5ed8eff) and start prompting.
+### 📊 Análisis Nutricional
+- **Información detallada**: Calorías, proteínas, carbohidratos, grasas, vitaminas y minerales
+- **Puntuación personalizada**: Evaluación nutricional basada en tus objetivos de salud
+- **Historial local**: Guarda todos los productos escaneados para consultas futuras
+- **Base de datos completa**: Acceso a millones de productos de todo el mundo
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🛡️ Privacidad y Seguridad
+- **Sin registro**: Usa la aplicación inmediatamente sin crear cuenta
+- **Sin publicidad**: Experiencia limpia sin anuncios molestos
+- **Datos locales**: Toda la información se guarda en tu dispositivo
+- **Sin rastreo**: No recopilamos ni compartimos datos personales
 
-**Use your preferred IDE**
+## 🚀 Tecnologías Utilizadas
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Icons**: Lucide React
+- **Camera API**: WebRTC para acceso a la cámara
+- **OCR**: Tesseract.js para reconocimiento de texto
+- **Data Source**: Open Food Facts API
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🛠️ Instalación y Uso
 
-Follow these steps:
+### Requisitos Previos
+- Node.js 18+ y npm
+- Navegador moderno con soporte para WebRTC
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Instalación Local
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# 1. Clona el repositorio
+git clone <URL_DEL_REPOSITORIO>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 2. Navega al directorio del proyecto
+cd nutri-score-scanner-plus-main
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 3. Instala las dependencias
+npm install
+
+# 4. Inicia el servidor de desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Uso de la Aplicación
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. **Permisos de cámara**: Al acceder por primera vez, permite el acceso a la cámara
+2. **Escaneo**: Apunta la cámara al código de barras del producto
+3. **Resultados**: Visualiza la información nutricional detallada
+4. **Historial**: Consulta productos escaneados anteriormente
+5. **Búsqueda manual**: Introduce códigos de barras si el escaneo falla
 
-**Use GitHub Codespaces**
+## 📱 Funcionalidades Avanzadas
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Modos de Escaneo
+- **Modo Precisión**: Escaneo más lento pero más preciso
+- **Modo Velocidad**: Escaneo rápido para uso diario
 
-## What technologies are used for this project?
+### OCR (Reconocimiento Óptico)
+- Lee números impresos debajo del código de barras
+- Útil cuando el código de barras está dañado o no se detecta
+- Resultado mostrado en pantalla para verificación
 
-This project is built with:
+### Validación de Códigos
+- Verificación automática de códigos EAN-13
+- Validación del dígito de control
+- Filtrado de códigos inválidos o incorrectos
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🌐 Páginas Informativas
 
-## How can I deploy this project?
+La aplicación incluye páginas informativas completas:
+- **Características**: Funcionalidades y ventajas de la app
+- **Base de Datos**: Información sobre las fuentes de datos
+- **Actualizaciones**: Últimas mejoras y próximas funcionalidades
+- **Ayuda**: Guías de uso y soporte
+- **FAQ**: Preguntas frecuentes
+- **Comunidad**: Cómo participar y contribuir
+- **Contacto**: Formulario de contacto
+- **Privacidad**: Política de privacidad
+- **Términos**: Términos de uso
+- **Cookies**: Política de cookies
+- **Licencias**: Información sobre licencias
 
-Simply open [Lovable](https://lovable.dev/projects/309016f7-1ecd-44f4-9465-0e95d5ed8eff) and click on Share -> Publish.
+## 🤝 Contribuir
 
-## Can I connect a custom domain to my Lovable project?
+¡Las contribuciones son bienvenidas! Puedes contribuir de varias maneras:
 
-Yes, you can!
+1. **Reportar bugs**: Usa el sistema de issues de GitHub
+2. **Sugerir mejoras**: Propon nuevas funcionalidades
+3. **Contribuir código**: Envía pull requests
+4. **Mejorar la documentación**: Ayuda a mejorar este README
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📄 Licencia
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 🙏 Agradecimientos
+
+- **Open Food Facts**: Por proporcionar la base de datos nutricional
+- **Comunidad de desarrolladores**: Por las librerías y herramientas utilizadas
+- **Usuarios**: Por el feedback y sugerencias que mejoran la aplicación
+
+## 📞 Contacto
+
+¿Tienes preguntas o sugerencias? No dudes en contactarnos:
+- **Email**: [tu-email@ejemplo.com]
+- **GitHub**: [tu-usuario-github]
+- **Formulario de contacto**: Disponible en la aplicación
+
+---
+
+<div align="center">
+  <p>Hecho con ❤️ para una alimentación más saludable</p>
+  <p>⭐ ¡Dale una estrella si te gusta el proyecto!</p>
+</div>
