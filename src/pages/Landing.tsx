@@ -745,7 +745,7 @@ const Landing = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 NutriScan. Todos los derechos reservados. Hecho con ❤️ para mejorar tu salud.</p>
+            <p>&copy; 2025 NutriScan. Todos los derechos reservados. Hecho con ❤️ para mejorar tu salud.</p>
           </div>
         </div>
       </footer>
