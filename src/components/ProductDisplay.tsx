@@ -3,6 +3,8 @@ import React from 'react';
 import { Product, UserGoal } from '../types/nutrition';
 import { analyzeNutrition } from '../utils/nutritionAnalyzer';
 import { Card } from '@/components/ui/card';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
+import { ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -170,6 +172,28 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({ product, userGoa
             {analysis.recommendation}
           </p>
         </div>
+      </Card>
+
+      
+
+      <Card className="p-6 border-0 bg-gradient-card mb-4">
+        <Collapsible>
+          <CollapsibleTrigger className="w-full text-left">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Ingredientes
+              </h3>
+              <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-3">
+            <div className="bg-white/50 rounded-lg p-4">
+              <p className="text-gray-700 whitespace-pre-line">
+                {product.ingredients_text_es || product.ingredients_text || 'No hay información de ingredientes disponible'}
+              </p>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
       {/* Información nutricional */}
