@@ -62,21 +62,18 @@ const Landing = () => {
       icon: <Scan className="w-8 h-8" />,
       title: "Escaneo Inteligente",
       description: "Escanea códigos de barras con tu cámara o introduce el código manualmente",
-      step: "01",
       highlight: "IA Avanzada"
     },
     {
       icon: <BarChart3 className="w-8 h-8" />,
       title: "Análisis Nutricional",
       description: "Obtén información nutricional detallada de miles de productos",
-      step: "02",
       highlight: "Base de datos global"
     },
     {
       icon: <Target className="w-8 h-8" />,
       title: "Personalización",
       description: "Adaptamos la puntuación según tus objetivos personales",
-      step: "03",
       highlight: "Algoritmo personalizado"
     }
   ];
@@ -430,11 +427,6 @@ const Landing = () => {
                 className={`relative group ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
                 style={{ animationDelay: `${index * 200}ms` }}
               >
-                {/* Step number */}
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg shadow-lg">
-                  {feature.step}
-                </div>
-                
                 <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
                   <div className="bg-gradient-to-br from-green-100 to-blue-100 text-green-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     {feature.icon}
